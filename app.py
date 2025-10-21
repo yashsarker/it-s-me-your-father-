@@ -9,12 +9,12 @@ import os
 # fuck you boka cuda , made by coder boy bd
 # ==========================================
 
-STATIC_AUTH_TOKEN = os.getenv("AKASH_STATIC_AUTH_TOKEN")
-SUBSCRIBER_ID = os.getenv("AKASH_SUBSCRIBER_ID")
-BAID = os.getenv("AKASH_BAID")
-X_APP_ID = os.getenv("AKASH_X_APP_ID")
-X_APP_KEY = os.getenv("AKASH_X_APP_KEY")
-X_SUBSCRIBER_NAME = os.getenv("AKASH_X_SUBSCRIBER_NAME", "CoderBoyBD")
+STATIC_AUTH_TOKEN = os.getenv("FANTRU")
+SUBSCRIBER_ID = os.getenv("BLUECODEXX")
+BAID = os.getenv("BLUECODEXXSID")
+X_APP_ID = os.getenv("APPXID")
+X_APP_KEY = os.getenv("AGAPPXID")
+X_SUBSCRIBER_NAME = os.getenv("FILEV8")
 
 DATA_FILE = "data.json"
 OUTPUT_M3U = "playlist.m3u"
@@ -22,7 +22,7 @@ OUTPUT_M3U = "playlist.m3u"
 
 def fetch_tokens(content_id):
     """Fetch fresh bearer and license session tokens."""
-    token_url = os.getenv("AKASH_TOKEN_URL")
+    token_url = os.getenv("APITKU")
     token_payload = {
         "action": "stream",
         "epids": [],
@@ -67,7 +67,7 @@ def fetch_tokens(content_id):
 
 def fetch_content(content_id, bearer_token, license_session):
     """Fetch content details for given ID."""
-    base_url = os.getenv("AKASH_CONTENT_URL_BASE")
+    base_url = os.getenv("AKGBSUR")
     url = f"{base_url}{content_id}"
     headers = {
         "accept": "application/json",
