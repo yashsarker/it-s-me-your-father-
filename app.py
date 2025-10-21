@@ -2,20 +2,27 @@ import requests
 import json
 import time
 import urllib.parse
+import os
 
-# ==============================
-# Akash Go → Playlist Generator
-# ==============================
+# ==========================================
+# kicu shikho miya sb  c , v krle hbe
+# fuck you boka cuda , made by coder boy bd
+# ==========================================
 
-STATIC_AUTH_TOKEN = "zaEUQQBobbev0pzWcF9CJGuTWK5wtbBX"
-SUBSCRIBER_ID = "41192391"
+STATIC_AUTH_TOKEN = os.getenv("AKASH_STATIC_AUTH_TOKEN")
+SUBSCRIBER_ID = os.getenv("AKASH_SUBSCRIBER_ID")
+BAID = os.getenv("AKASH_BAID")
+X_APP_ID = os.getenv("AKASH_X_APP_ID")
+X_APP_KEY = os.getenv("AKASH_X_APP_KEY")
+X_SUBSCRIBER_NAME = os.getenv("AKASH_X_SUBSCRIBER_NAME", "CoderBoyBD")
+
 DATA_FILE = "data.json"
 OUTPUT_M3U = "playlist.m3u"
 
 
 def fetch_tokens(content_id):
     """Fetch fresh bearer and license session tokens."""
-    token_url = "https://kong.akash-go.com/auth/auth-service/v1/oauth/token-service/token"
+    token_url = os.getenv("AKASH_TOKEN_URL")
     token_payload = {
         "action": "stream",
         "epids": [],
@@ -28,21 +35,21 @@ def fetch_tokens(content_id):
         "content-type": "application/json",
         "appversion": "1.0.34",
         "authorization": f"bearer {STATIC_AUTH_TOKEN}",
-        "baid": "1001063469",
+        "baid": BAID,
         "dthstatus": "DTH With Binge",
         "origin": "https://www.akashgo.com",
         "platform": "binge_anywhere_web",
         "referer": "https://www.akashgo.com/",
         "subscriberid": SUBSCRIBER_ID,
         "subscriptiontype": "FREEMIUM",
-        "x-app-id": "123456",
-        "x-app-key": "123456",
+        "x-app-id": X_APP_ID,
+        "x-app-key": X_APP_KEY,
         "x-authenticated-userid": SUBSCRIBER_ID,
         "x-device-id": str(int(time.time() * 1000)),
         "x-device-platform": "PC",
         "x-device-type": "ANDROID",
         "x-subscriber-id": SUBSCRIBER_ID,
-        "x-subscriber-name": "CoderBoyBD",
+        "x-subscriber-name": X_SUBSCRIBER_NAME,
         "user-agent": "okhttp/4.9.3"
     }
 
@@ -60,7 +67,8 @@ def fetch_tokens(content_id):
 
 def fetch_content(content_id, bearer_token, license_session):
     """Fetch content details for given ID."""
-    url = f"https://kong.akash-go.com/content-subscriber-detail/api/content/info/vod/{content_id}"
+    base_url = os.getenv("AKASH_CONTENT_URL_BASE")
+    url = f"{base_url}{content_id}"
     headers = {
         "accept": "application/json",
         "authorization": f"Bearer {bearer_token}",
@@ -121,7 +129,6 @@ def make_m3u_entry(info, category):
 if __name__ == "__main__":
     print("=== Akash Go → Playlist Generator ===\n")
 
-    # Load data.json
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -152,10 +159,9 @@ if __name__ == "__main__":
 
         m3u_output += "\n"
 
-    # Save final playlist
     try:
         with open(OUTPUT_M3U, "w", encoding="utf-8") as f:
             f.write(m3u_output)
-        print(f"\n✅ Playlist generated successfully → {OUTPUT_M3U}")
+        print(f"\n Playlist generated successfully → {OUTPUT_M3U}")
     except Exception as e:
         print(f"[] Failed to save playlist: {e}")
