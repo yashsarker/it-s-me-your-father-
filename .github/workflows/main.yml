@@ -2,8 +2,8 @@ name: Update AkashGo Playlist
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   
-  workflow_dispatch:         
+    - cron: "*/5 * * * *"  
+  workflow_dispatch:
 
 jobs:
   update_playlist:
@@ -26,7 +26,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Run AkashGo playlist script
+      - name: Run AkashGo Playlist Generator
+        env:
+          AKASH_STATIC_AUTH_TOKEN: ${{ secrets.AKASH_STATIC_AUTH_TOKEN }}
+          AKASH_SUBSCRIBER_ID: ${{ secrets.AKASH_SUBSCRIBER_ID }}
+          AKASH_BAID: ${{ secrets.AKASH_BAID }}
+          AKASH_X_APP_ID: ${{ secrets.AKASH_X_APP_ID }}
+          AKASH_X_APP_KEY: ${{ secrets.AKASH_X_APP_KEY }}
+          AKASH_X_SUBSCRIBER_NAME: ${{ secrets.AKASH_X_SUBSCRIBER_NAME }}
+          AKASH_TOKEN_URL: ${{ secrets.AKASH_TOKEN_URL }}
+          AKASH_CONTENT_URL_BASE: ${{ secrets.AKASH_CONTENT_URL_BASE }}
         run: |
           echo "=== Running AkashGo Playlist Generator ==="
           python app.py
