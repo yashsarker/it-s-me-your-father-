@@ -3,6 +3,9 @@ import json
 import time
 import urllib.parse
 
+# ==============================
+# Akash Go → Playlist Generator
+# ==============================
 
 STATIC_AUTH_TOKEN = "zaEUQQBobbev0pzWcF9CJGuTWK5wtbBX"
 SUBSCRIBER_ID = "41192391"
@@ -98,14 +101,14 @@ def fetch_content(content_id, bearer_token, license_session):
         return None
 
 
-def make_m3u_entry(info):
-    """Create one M3U entry block."""
+def make_m3u_entry(info, category):
+    """Create one M3U entry block with category support."""
     title = info["title"]
     mpd = info["mpd"]
     poster = info["poster"]
     license_url = info["license"]
 
-    return f'''#EXTINF:-1 group-title="AKASHGO" tvg-id="" tvg-logo="{poster}", {title}
+    return f'''#EXTINF:-1 group-title="AkashGo | {category}" tvg-id="" tvg-logo="{poster}", {title}
 #EXTVLCOPT:http-user-agent=Mozilla/5.0(coderboybd) (Linux; Android 9; Redmi S2 Build/PKQ1.181203.001) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.7049.79 Mobile Safari/537.36
 #KODIPROP:inputstream.adaptive.manifest_type=dash
 #KODIPROP:inputstream.adaptive.license_type=com.widevine.alpha
@@ -115,10 +118,10 @@ def make_m3u_entry(info):
 '''
 
 
-
 if __name__ == "__main__":
     print("=== Akash Go → Playlist Generator ===\n")
 
+    # Load data.json
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -128,24 +131,31 @@ if __name__ == "__main__":
 
     m3u_output = "#EXTM3U\n\n"
 
-    for content_id in data.keys():
-        print(f"[] Processing Content ID: {content_id}")
+    for category, items in data.items():
+        print(f"\n=== Category: {category} ===")
+        m3u_output += f"# ===== {category} =====\n"
 
-        bearer, ls_token = fetch_tokens(content_id)
-        if not bearer or not ls_token:
-            continue
+        for content_id in items.keys():
+            print(f"[] Processing Content ID: {content_id}")
 
-        content_info = fetch_content(content_id, bearer, ls_token)
-        if content_info:
-            entry = make_m3u_entry(content_info)
-            m3u_output += entry
-            print(f"[] Added: {content_info['title']}")
-        else:
-            print(f"[] Skipped Content ID {content_id}")
+            bearer, ls_token = fetch_tokens(content_id)
+            if not bearer or not ls_token:
+                continue
 
+            content_info = fetch_content(content_id, bearer, ls_token)
+            if content_info:
+                entry = make_m3u_entry(content_info, category)
+                m3u_output += entry
+                print(f"[] Added: {content_info['title']}")
+            else:
+                print(f"[] Skipped Content ID {content_id}")
+
+        m3u_output += "\n"
+
+    # Save final playlist
     try:
         with open(OUTPUT_M3U, "w", encoding="utf-8") as f:
             f.write(m3u_output)
-        print(f"\n Playlist generated successfully → {OUTPUT_M3U}")
+        print(f"\n✅ Playlist generated successfully → {OUTPUT_M3U}")
     except Exception as e:
         print(f"[] Failed to save playlist: {e}")
